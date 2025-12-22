@@ -1,69 +1,130 @@
-# ENTERTAINMENT
-And TV HD|http://yuphdtv.net/play_tr/?id=And_TV_HD/And_TV_HD.m3u8
-Sony Rox HD|http://yuphdtv.net/play_tr/?id=Sony_Rox_HD/Sony_Rox_HD
-Sony HD|http://yuphdtv.net/play_tr/?id=Sony_HD/Sony_HD
-MTV Beats HD|http://yuphdtv.net/play_tr/?id=MTV_Beats_HD/MTV_Beats_HD
-Zee Cinema HD|http://yuphdtv.net/play_tr/?id=Zee_Cinema_HD/Zee_Cinema_HD
-Sony Max HD|http://yuphdtv.net/play_tr/?id=Sony_Max_HD/Sony_Max_HD
-Zee TV HD|http://yuphdtv.net/play_tr/?id=Zee_TV_HD/Zee_TV_HD
-Sony SAB HD|http://yuphdtv.net/play_tr/?id=Sony_SAB_HD/Sony_SAB_HD
-Colors HD|http://yuphdtv.net/play_tr/?id=Colors_HD/Colors_HD
-And Pictures HD|http://yuphdtv.net/play_tr/?id=And_Pictures_HD/And_Pictures_HD
-Sony Le Plex HD|http://yuphdtv.net/play_tr/?id=Sony_Le_PLEX_HD/Sony_Le_PLEX_HD
-Movies Now HD|http://yuphdtv.net/play_tr/?id=Movies_Now_HD/Movies_Now_HD
-Sony Pix HD|http://yuphdtv.net/play_tr/?id=Sony_Pix_HD/Sony_Pix_HD
-MNPLUS|http://yuphdtv.net/play_tr/?id=MNPLUS/MNPLUS
-Romedy Now HD|http://yuphdtv.net/play_tr/?id=Romedy_Now_HD/Romedy_Now_HD
-AXN HD|http://yuphdtv.net/play_tr/?id=AXN_HD/AXN_HD
-HBO HD|http://yuphdtv.net/play_tr/?id=HBO_HD/HBO_HD
+#EXTM3U
 
-# INFORMATION
-History HD|http://yuphdtv.net/play_tr/?id=History_HD/History_HD
-Travel XP HD|http://yuphdtv.net/play_tr/?id=Travel_XP_HD/Travel_XP_HD
-Discovery HD World|http://yuphdtv.net/play_tr/?id=Discovery_HD_World/Discovery_HD_World
-Animal Planet HD|http://yuphdtv.net/play_tr/?id=Animal_Planet_HD/Animal_Planet_HD
-TLC HD World|http://yuphdtv.net/play_tr/?id=TLC_HD_World/TLC_HD_World
-FYI TV18|http://yuphdtv.net/play_tr/?id=FYI_TV18/FYI_TV18
+#EXTINF:-1 group-title="Tamil",Canada EETTV
+http://live.streamjo.com:1935/eetlive/eettv/playlist.m3u8
 
-# MUSIC
-MTV|http://yuphdtv.net/play_tr/?id=MTV/MTV
-Mastii|http://yuphdtv.net/play_tr/?id=Mastiii/Mastiii
-9XM|http://yuphdtv.net/play_tr/?id=9XM/9XM
-Sony Mix|http://yuphdtv.net/play_tr/?id=Sony_Mix/Sony_Mix
-ETC|http://yuphdtv.net/play_tr/?id=etc/etc
-E24|http://yuphdtv.net/play_tr/?id=E_24/E_24
-9X Jalwa|http://yuphdtv.net/play_tr/?id=9X_Jalwa/9X_Jalwa
+#EXTINF:-1 group-title="Tamil",EET TV
+https://live.streamjo.com/eetlive/eettv.m3u8
 
-# SPORTS
-Neo Sports|http://yuphdtv.net/play_tr/?id=Neo_Sports/Neo_Sports
-Ten 1|http://yuphdtv.net/play_tr/?id=Ten_1/Ten_1
-Ten 2|http://yuphdtv.net/play_tr/?id=Ten_2/Ten_2
-Ten 3|http://yuphdtv.net/play_tr/?id=Ten_3/Ten_3
-Ten HD|http://yuphdtv.net/play_tr/?id=Ten_HD/Ten_HD
-Neo Prime|http://yuphdtv.net/play_tr/?id=Neo_Prime/Neo_Prime
-Sony Six|http://yuphdtv.net/play_tr/?id=Sony_Six_SD/Sony_Six_SD
-Sony ESPN|http://yuphdtv.net/play_tr/?id=Sony_ESPN_SD/Sony_ESPN_SD
+#EXTINF:-1 group-title="Tamil",Canada Tamils
+http://live.streamjo.com:1935/cctv/live/playlist.m3u8
 
-# NEWS
-Republic TV|http://yuphdtv.net/play_tr/?id=Republic_TV/Republic_TV
-ABP News India|http://yuphdtv.net/play_tr/?id=ABP_News_India/ABP_News_India
-CNN News 18|http://yuphdtv.net/play_tr/?id=CNN_NEWS_18/CNN_NEWS_18
-Aaj Tak|http://yuphdtv.net/play_tr/?id=Aaj_Tak/Aaj_Tak
-NDTV 24x7|http://yuphdtv.net/play_tr/?id=NDTV_24x7/NDTV_24x7
-India Today|http://yuphdtv.net/play_tr/?id=India_Today/India_Today
-Times Now|http://yuphdtv.net/play_tr/?id=Times_NOW/Times_NOW
-BBC World News|http://yuphdtv.net/play_tr/?id=BBC_World_News/BBC_World_News
-NDTV India|http://yuphdtv.net/play_tr/?id=NDTV_India/NDTV_India
+#EXTINF:-1 group-title="Tamil",Engada TV
+http://live.streamjo.com:1935/eetlive/engadatv/playlist.m3u8
 
-# TAMIL
-Sun TV|http://yuphdtv.net/play_tr/?id=Sun_TV/Sun_TV
-Thanthi TV|http://yuphdtv.net/play_tr/?id=Thanthi_TV/Thanthi_TV
-Puthu Yugam|http://yuphdtv.net/play_tr/?id=Puthu_Yugam/Puthu_Yugam
-Malai Murasu|http://yuphdtv.net/play_tr/?id=Malai_Murasu/Malai_Murasu
-Vendhar TV|http://yuphdtv.net/play_tr/?id=Vendhar_TV/Vendhar_TV
-MK TV|http://yuphdtv.net/play_tr/?id=MK_TV/MK_TV
-Zee Tamil|http://yuphdtv.net/play_tr/?id=Zee_Tamil/Zee_Tamil
-Polimer News|http://yuphdtv.net/play_tr/?id=Polimer_News/Polimer_News
-News7 Tamil|http://yuphdtv.net/play_tr/?id=News7_Tamil/News7_Tamil
-Sun News|http://yuphdtv.net/play_tr/?id=Sun_News/Sun_News
-Puthiya Thalimurai|http://yuphdtv.net/play_tr/?id=Puthiya_Thalimurai/Puthiya_Thalimurai
+#EXTINF:-1 group-title="Tamil",Meenakshi TV
+http://150.242.21.2/meenakshi.m3u8
+
+#EXTINF:-1 group-title="Tamil",Dheeran TV
+http://cdn.asianetmobiletvplus.online/channels/dheerantv_hjykdbbkxbzqjhwiilxdziveskvmspkt/index.m3u8
+
+#EXTINF:-1 group-title="Tamil",Sivan TV
+https://sivan.vedge.infomaniak.com/livecast/sivan/playlist.m3u8
+
+#EXTINF:-1 group-title="Tamil",Sivam TV
+http://209.58.178.208/sivamtvhls/sivamtv.m3u8
+
+#EXTINF:-1 group-title="Tamil",SKTAT TV
+http://ealing.zecast.net/ealing-live-2/sktat.stream/index.m3u8
+
+#EXTINF:-1 group-title="Tamil",Sri Krishna TV
+http://bsk.livebox.co.in/srikrishnatverdhls/srikrishnatverd.m3u8
+
+#EXTINF:-1 group-title="Tamil",Agam TV
+http://209.58.160.206/agamtvhls/live.m3u8
+
+#EXTINF:-1 group-title="Tamil",Vasantham TV
+http://cdncities.com/vasanthamtv/vasanthamtv/playlist.m3u8
+
+#EXTINF:-1 group-title="Tamil",Vasantham Singapore
+https://d39v9xz8f7n8tk.cloudfront.net/hls/vsnthmpcweb/04.m3u8
+
+#EXTINF:-1 group-title="Tamil",Velicham TV
+http://edge-ind.inapcdn.in:1935/wrap/smarts4n.stream_aac/playlist.m3u8
+
+#EXTINF:-1 group-title="Tamil",Sangamam TV
+http://livematrix.in:1935/live/sangamamtv/playlist.m3u8
+
+#EXTINF:-1 group-title="Tamil",MGR TV HD
+http://livematrix.in:1935/live/mgrtv/index.m3u8
+
+#EXTINF:-1 group-title="Tamil",Deepam TV
+http://88.202.186.202:1935/cdn/deepamtvuk/index.m3u8
+
+#EXTINF:-1 group-title="Tamil",Tamil Vision TV
+http://live.tamilvision.tv:8081/TVI/SD/chunks.m3u8
+
+#EXTINF:-1 group-title="Tamil",Tamil Vision TV HD
+http://live.tamilvision.tv:8081/TVI/HD/playlist.m3u8
+
+#EXTINF:-1 group-title="Tamil",Malai Murasu TV
+http://45.79.203.234:1935/murasutv/myStream/playlist.m3u8
+
+#EXTINF:-1 group-title="Tamil",IBC Tamil
+https://5928f90056f31.streamlock.net/ibc-test/smil:ibc_tamiltv.smil/chunklist.m3u8
+
+#EXTINF:-1 group-title="Tamil",IBC Tamil Music
+https://cdn.ibctamil.com/ibc-music/smil:ibcmusic.smil/index.m3u8
+
+#EXTINF:-1 group-title="Tamil",Vaigai TV
+http://209.58.164.113/vaigaihls/live.m3u8
+
+#EXTINF:-1 group-title="Tamil",Aasai TV
+http://209.58.180.53/osaihls/live.m3u8
+
+#EXTINF:-1 group-title="Tamil",Tamilan24
+http://45.79.203.234:1935/tamilan24/myStream/chunklist.m3u8
+
+#EXTINF:-1 group-title="Tamil",Jaal TV
+http://209.58.160.112/jaaltvhls/live.m3u8
+
+#EXTINF:-1 group-title="Tamil",NettriKann TV
+http://45.79.203.234:1935/netrikgunhd/myStream/index.m3u8
+
+#EXTINF:-1 group-title="Tamil",Mugizh TV HD
+http://209.58.180.57/mugizhtvhls/live.m3u8
+
+#EXTINF:-1 group-title="Tamil",Jawahar TV
+http://137.74.115.81/jawaharchannelhls/jc.m3u8
+
+#EXTINF:-1 group-title="Tamil",Jaffna TV
+http://stmv3.srvstm.com/matheus/matheus/playlist.m3u8
+
+#EXTINF:-1 group-title="Tamil",Namadhu TV
+http://d3jo7lhb81t2hz.cloudfront.net/namadhutv/ngrp:live_all/index.m3u8
+
+#EXTINF:-1 group-title="Tamil",Naagan TV
+http://nagantv.livebox.co.in/nagantvhls/nagantv.m3u8
+
+#EXTINF:-1 group-title="Tamil",1Yes TV
+http://150.242.21.2/oneyes.m3u8
+
+#EXTINF:-1 group-title="Tamil",Naaam Tamizhar TV
+http://ntktv.cobrasoftwares.in/hls/stream.m3u8
+
+#EXTINF:-1 group-title="Tamil",Peppers TV
+http://live.wmncdn.net/peppers/live.stream/tracks-v1a1/index.m3u8
+
+#EXTINF:-1 group-title="Tamil",NBTV
+http://209.58.180.57/nbtvhls/nbtv.m3u8
+
+#EXTINF:-1 group-title="Tamil",MK TV
+http://mhms9.airtel.tv/wh7f454c46tw4163224253_611767333/PLTV/88888888/224/3221226196/index.m3u8
+
+#EXTINF:-1 group-title="Tamil",Thanthi TV
+http://mhms9.airtel.tv/wh7f454c46tw4163224253_611767333/PLTV/88888888/224/3221226219/1.m3u8
+
+#EXTINF:-1 group-title="Tamil",Raj TV
+http://mhms9.airtel.tv/wh7f454c46tw4163224253_611767333/PLTV/88888888/224/3221226220/1.m3u8
+
+#EXTINF:-1 group-title="Tamil",Sirippoli
+http://mhms9.airtel.tv/wh7f454c46tw4163224253_611767333/PLTV/88888888/224/3221226221/1.m3u8
+
+#EXTINF:-1 group-title="Tamil",Captain TV
+http://mhms9.airtel.tv/wh7f454c46tw4163224253_611767333/PLTV/88888888/224/3221226312/1.m3u8
+
+#EXTINF:-1 group-title="Tamil",Puthu Yugam
+http://mhms9.airtel.tv/wh7f454c46tw4163224253_611767333/PLTV/88888888/224/3221226313/1.m3u8
+
+#EXTINF:-1 group-title="Tamil",Kalingar News
+http://mhms9.airtel.tv/wh7f454c46tw4163224253_611767333/PLTV/88888888/224/3221226318/1.m3u8
