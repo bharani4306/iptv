@@ -34,13 +34,13 @@
 
 <h1>Tamil TV Channels</h1>
 
-<div id="list"></div>
+<div id="channels"></div>
 
 <script>
 fetch("channels.txt")
   .then(res => res.text())
   .then(data => {
-    const container = document.getElementById("list");
+    const container = document.getElementById("channels");
 
     data.split("\n").forEach(line => {
       line = line.trim();
