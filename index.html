@@ -78,7 +78,7 @@
   <video id="video" controls autoplay></video>
 </div>
 
-<div id="status">Status: loading…</div>
+<div id="status">Loading channels…</div>
 
 <script>
 const video = document.getElementById("video");
@@ -86,14 +86,18 @@ const channelBox = document.getElementById("channels");
 const status = document.getElementById("status");
 let hls = null;
 
-function playStream(name, url) {
-  status.textContent = "Playing: " + name;
+// Free demo CORS proxy (for college/demo only)
+const PROXY = "https://cors.isomorphic-git.org/";
 
-  // Browser limitation
+function playStream(name, url) {
+  status.textContent = "Trying: " + name;
+
   if (!url.endsWith(".m3u8")) {
-    status.textContent = "Cannot play this stream in browser";
+    status.textContent = "Skipped (not browser-playable)";
     return;
   }
+
+  const streamUrl = PROXY + url;
 
   if (hls) {
     hls.destroy();
@@ -102,14 +106,20 @@ function playStream(name, url) {
 
   if (Hls.isSupported()) {
     hls = new Hls();
-    hls.loadSource(url);
+    hls.loadSource(streamUrl);
     hls.attachMedia(video);
 
-    hls.on(Hls.Events.ERROR, (_, data) => {
-      status.textContent = "Stream error: " + data.details;
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      status.textContent = "Playing: " + name;
     });
+
+    hls.on(Hls.Events.ERROR, (_, data) => {
+      status.textContent = "Stream blocked or unavailable";
+      console.error(data);
+    });
+
   } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-    video.src = url; // Safari
+    video.src = streamUrl;
   } else {
     status.textContent = "HLS not supported in this browser";
   }
@@ -118,27 +128,28 @@ function playStream(name, url) {
 fetch("channels.txt")
   .then(res => res.text())
   .then(text => {
-    text.split("\n").forEach(line => {
-      line = line.trim();
-      if (!line) return;
+    const lines = text
+      .split("\n")
+      .map(l => l.trim())
+      .filter(Boolean);
 
-      const parts = line.split("|");
-      if (parts.length !== 2) return;
+    for (let i = 0; i < lines.length; i += 2) {
+      const name = lines[i];
+      const url = lines[i + 1];
 
-      const name = parts[0];
-      const url = parts[1];
+      if (!name || !url) continue;
 
       const btn = document.createElement("button");
       btn.textContent = name;
       btn.onclick = () => playStream(name, url);
 
       channelBox.appendChild(btn);
-    });
+    }
 
     status.textContent = "Channels loaded";
   })
   .catch(err => {
-    status.textContent = "ERROR: channels.txt not loaded";
+    status.textContent = "Failed to load channels.txt";
     console.error(err);
   });
 </script>
