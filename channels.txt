@@ -1,5 +1,5 @@
 # ENTERTAINMENT
-And TV HD|http://yuphdtv.net/play_tr/?id=And_TV_HD/And_TV_HD
+And TV HD|http://yuphdtv.net/play_tr/?id=And_TV_HD/And_TV_HD.m3u8
 Sony Rox HD|http://yuphdtv.net/play_tr/?id=Sony_Rox_HD/Sony_Rox_HD
 Sony HD|http://yuphdtv.net/play_tr/?id=Sony_HD/Sony_HD
 MTV Beats HD|http://yuphdtv.net/play_tr/?id=MTV_Beats_HD/MTV_Beats_HD
