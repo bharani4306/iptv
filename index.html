@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>IPTV Web Player</title>
+
+  <!-- HLS.js -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <style>
@@ -14,16 +16,20 @@
       display: flex;
       height: 100vh;
     }
+
     #channels {
-      width: 300px;
+      width: 320px;
       background: #1c1c1c;
       padding: 10px;
       overflow-y: auto;
       border-right: 1px solid #333;
     }
+
     #channels h2 {
       text-align: center;
+      margin-top: 0;
     }
+
     #channels button {
       width: 100%;
       padding: 10px;
@@ -34,9 +40,11 @@
       cursor: pointer;
       text-align: left;
     }
+
     #channels button:hover {
       background: #444;
     }
+
     #player {
       flex: 1;
       display: flex;
@@ -44,17 +52,19 @@
       justify-content: center;
       background: #000;
     }
+
     video {
       width: 95%;
       max-height: 95%;
       background: black;
     }
+
     #status {
       position: fixed;
       bottom: 10px;
-      left: 310px;
-      color: #aaa;
+      left: 330px;
       font-size: 13px;
+      color: #aaa;
     }
   </style>
 </head>
@@ -68,7 +78,7 @@
   <video id="video" controls autoplay></video>
 </div>
 
-<div id="status">Status: waiting…</div>
+<div id="status">Status: loading…</div>
 
 <script>
 const video = document.getElementById("video");
@@ -79,8 +89,9 @@ let hls = null;
 function playStream(name, url) {
   status.textContent = "Playing: " + name;
 
+  // Browser limitation
   if (!url.endsWith(".m3u8")) {
-    status.textContent = "Unsupported stream format (browser)";
+    status.textContent = "Cannot play this stream in browser";
     return;
   }
 
@@ -93,18 +104,19 @@ function playStream(name, url) {
     hls = new Hls();
     hls.loadSource(url);
     hls.attachMedia(video);
+
     hls.on(Hls.Events.ERROR, (_, data) => {
       status.textContent = "Stream error: " + data.details;
     });
   } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-    video.src = url;
+    video.src = url; // Safari
   } else {
     status.textContent = "HLS not supported in this browser";
   }
 }
 
 fetch("channels.txt")
-  .then(r => r.text())
+  .then(res => res.text())
   .then(text => {
     text.split("\n").forEach(line => {
       line = line.trim();
@@ -123,7 +135,7 @@ fetch("channels.txt")
       channelBox.appendChild(btn);
     });
 
-    status.textContent = "Channels loaded successfully";
+    status.textContent = "Channels loaded";
   })
   .catch(err => {
     status.textContent = "ERROR: channels.txt not loaded";
