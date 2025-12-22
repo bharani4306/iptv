@@ -2,89 +2,121 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tamil Channels List</title>
+  <title>IPTV Web Player</title>
+
+  <!-- HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
       background: #111;
       color: #fff;
-      padding: 20px;
+      display: flex;
+      height: 100vh;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #333;
+    #channels {
+      width: 280px;
+      background: #1c1c1c;
       padding: 10px;
+      overflow-y: auto;
+      border-right: 1px solid #333;
+    }
+    #channels h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+    #channels button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 6px;
+      background: #2b2b2b;
+      color: #fff;
+      border: none;
+      cursor: pointer;
       text-align: left;
     }
-    th {
-      background: #222;
+    #channels button:hover {
+      background: #444;
     }
-    tr:nth-child(even) {
-      background: #1a1a1a;
+    #player {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
     }
-    a {
-      color: #4da6ff;
-      word-break: break-all;
+    video {
+      width: 95%;
+      max-height: 95%;
+      background: black;
     }
   </style>
 </head>
 <body>
 
-<h1>Tamil TV Channels</h1>
+<!-- Channel List -->
+<div id="channels">
+  <h2>Channels</h2>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Channel Name</th>
-      <th>URL</th>
-    </tr>
-  </thead>
-  <tbody id="channelTable">
-  </tbody>
-</table>
+<!-- Video Player -->
+<div id="player">
+  <video id="video" controls autoplay></video>
+</div>
 
 <script>
-fetch("channels.txt")
-  .then(response => response.text())
-  .then(text => {
-    const table = document.getElementById("channelTable");
+  const video = document.getElementById("video");
+  const channelBox = document.getElementById("channels");
+  let hls = null;
 
-    text.split("\n").forEach(line => {
-      line = line.trim();
-      if (!line) return;
+  function playStream(url) {
+    // Browser limitation
+    if (!url.endsWith(".m3u8")) {
+      alert("This stream format is not supported in browser");
+      return;
+    }
 
-      const parts = line.split("|");
-      if (parts.length !== 2) return;
+    if (hls) {
+      hls.destroy();
+      hls = null;
+    }
 
-      const tr = document.createElement("tr");
+    if (Hls.isSupported()) {
+      hls = new Hls();
+      hls.loadSource(url);
+      hls.attachMedia(video);
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = url; // Safari
+    } else {
+      alert("HLS not supported in this browser");
+    }
+  }
 
-      const tdName = document.createElement("td");
-      tdName.textContent = parts[0];
+  fetch("channels.txt")
+    .then(res => res.text())
+    .then(text => {
+      text.split("\n").forEach(line => {
+        line = line.trim();
+        if (!line) return;
 
-      const tdUrl = document.createElement("td");
-      const link = document.createElement("a");
-      link.href = parts[1];
-      link.textContent = parts[1];
-      link.target = "_blank";
+        const parts = line.split("|");
+        if (parts.length !== 2) return;
 
-      tdUrl.appendChild(link);
+        const name = parts[0];
+        const url = parts[1];
 
-      tr.appendChild(tdName);
-      tr.appendChild(tdUrl);
+        const btn = document.createElement("button");
+        btn.textContent = name;
+        btn.onclick = () => playStream(url);
 
-      table.appendChild(tr);
+        channelBox.appendChild(btn);
+      });
+    })
+    .catch(() => {
+      alert("channels.txt not found or page not served via HTTP");
     });
-  })
-  .catch(() => {
-    alert("channels.txt not found or page not served via HTTP");
-  });
 </script>
 
 </body>
