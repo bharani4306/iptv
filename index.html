@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tamil Channels</title>
+  <title>Tamil Channels List</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,21 +12,26 @@
     }
     h1 {
       text-align: center;
+      margin-bottom: 20px;
     }
-    .row {
-      background: #1e1e1e;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #333;
       padding: 10px;
-      margin-bottom: 8px;
-      border-radius: 5px;
+      text-align: left;
     }
-    .name {
-      font-weight: bold;
-      margin-bottom: 4px;
+    th {
+      background: #222;
+    }
+    tr:nth-child(even) {
+      background: #1a1a1a;
     }
     a {
       color: #4da6ff;
       word-break: break-all;
-      text-decoration: none;
     }
   </style>
 </head>
@@ -34,31 +39,51 @@
 
 <h1>Tamil TV Channels</h1>
 
-<div id="channels"></div>
+<table>
+  <thead>
+    <tr>
+      <th>Channel Name</th>
+      <th>URL</th>
+    </tr>
+  </thead>
+  <tbody id="channelTable">
+  </tbody>
+</table>
 
 <script>
 fetch("channels.txt")
-  .then(res => res.text())
-  .then(data => {
-    const container = document.getElementById("channels");
+  .then(response => response.text())
+  .then(text => {
+    const table = document.getElementById("channelTable");
 
-    data.split("\n").forEach(line => {
+    text.split("\n").forEach(line => {
       line = line.trim();
       if (!line) return;
 
-      const [name, url] = line.split("|");
-      if (!name || !url) return;
+      const parts = line.split("|");
+      if (parts.length !== 2) return;
 
-      const div = document.createElement("div");
-      div.className = "row";
+      const tr = document.createElement("tr");
 
-      div.innerHTML = `
-        <div class="name">${name}</div>
-        <a href="${url}" target="_blank">${url}</a>
-      `;
+      const tdName = document.createElement("td");
+      tdName.textContent = parts[0];
 
-      container.appendChild(div);
+      const tdUrl = document.createElement("td");
+      const link = document.createElement("a");
+      link.href = parts[1];
+      link.textContent = parts[1];
+      link.target = "_blank";
+
+      tdUrl.appendChild(link);
+
+      tr.appendChild(tdName);
+      tr.appendChild(tdUrl);
+
+      table.appendChild(tr);
     });
+  })
+  .catch(() => {
+    alert("channels.txt not found or page not served via HTTP");
   });
 </script>
 
