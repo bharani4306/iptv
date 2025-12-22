@@ -2,146 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>IPTV Web Player</title>
-
-  <!-- HLS.js -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
+  <title>Tamil Channels</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
       background: #111;
       color: #fff;
-      display: flex;
-      height: 100vh;
+      padding: 20px;
     }
-
-    /* Sidebar */
-    #channels {
-      width: 280px;
-      background: #1c1c1c;
-      padding: 10px;
-      overflow-y: auto;
-      border-right: 1px solid #333;
-    }
-
-    #channels h3 {
-      margin-top: 0;
+    h1 {
       text-align: center;
     }
-
-    #channels h4 {
-      margin: 15px 0 6px;
-      font-size: 14px;
-      color: #aaa;
-      border-bottom: 1px solid #333;
-      padding-bottom: 4px;
-    }
-
-    #channels button {
-      width: 100%;
+    .row {
+      background: #1e1e1e;
       padding: 10px;
-      margin-bottom: 6px;
-      background: #2b2b2b;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      text-align: left;
-      font-size: 14px;
+      margin-bottom: 8px;
+      border-radius: 5px;
     }
-
-    #channels button:hover {
-      background: #444;
+    .name {
+      font-weight: bold;
+      margin-bottom: 4px;
     }
-
-    /* Player */
-    #player {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #000;
-    }
-
-    video {
-      width: 90%;
-      max-height: 90%;
-      background: black;
+    a {
+      color: #4da6ff;
+      word-break: break-all;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Channel List -->
-  <div id="channels">
-    <h3>Channels</h3>
-  </div>
+<h1>Tamil TV Channels</h1>
 
-  <!-- Video Player -->
-  <div id="player">
-    <video id="video" controls autoplay></video>
-  </div>
+<div id="list"></div>
 
 <script>
-  const video = document.getElementById("video");
-  const channelBox = document.getElementById("channels");
-  let hls = null;
+fetch("channels.txt")
+  .then(res => res.text())
+  .then(data => {
+    const container = document.getElementById("list");
 
-  function playStream(url) {
-    if (hls) {
-      hls.destroy();
-      hls = null;
-    }
+    data.split("\n").forEach(line => {
+      line = line.trim();
+      if (!line) return;
 
-    if (Hls.isSupported()) {
-      hls = new Hls();
-      hls.loadSource(url);
-      hls.attachMedia(video);
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = url;
-    } else {
-      alert("HLS not supported in this browser");
-    }
-  }
+      const [name, url] = line.split("|");
+      if (!name || !url) return;
 
-  fetch("channels.txt")
-    .then(response => response.text())
-    .then(text => {
-      text.split("\n").forEach(line => {
-        line = line.trim();
-        if (!line) return;
+      const div = document.createElement("div");
+      div.className = "row";
 
-        /* Category line */
-        if (line.startsWith("#")) {
-          const category = document.createElement("h4");
-          category.textContent = line.replace("#", "").trim();
-          channelBox.appendChild(category);
-          return;
-        }
+      div.innerHTML = `
+        <div class="name">${name}</div>
+        <a href="${url}" target="_blank">${url}</a>
+      `;
 
-        /* Channel line */
-        const parts = line.split("|");
-        if (parts.length !== 2) return;
-
-        const name = parts[0];
-        const url = parts[1];
-
-        const btn = document.createElement("button");
-        btn.textContent = name;
-        btn.onclick = () => playStream(url);
-
-        channelBox.appendChild(btn);
-      });
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Failed to load channels.txt");
+      container.appendChild(div);
     });
+  });
 </script>
 
 </body>
