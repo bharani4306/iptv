@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>IPTV M3U Web Player</title>
-
+  <title>Browser IPTV Player</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <style>
@@ -16,20 +15,16 @@
       height: 100vh;
     }
     #channels {
-      width: 360px;
+      width: 300px;
       background: #1c1c1c;
       padding: 10px;
       overflow-y: auto;
       border-right: 1px solid #333;
     }
-    #channels h2 {
-      margin: 0 0 10px;
-      text-align: center;
-    }
     #channels button {
       width: 100%;
-      padding: 8px;
-      margin-bottom: 5px;
+      padding: 10px;
+      margin-bottom: 6px;
       background: #2b2b2b;
       color: #fff;
       border: none;
@@ -49,94 +44,47 @@
     video {
       width: 95%;
       max-height: 95%;
-    }
-    #status {
-      position: fixed;
-      bottom: 10px;
-      left: 380px;
-      font-size: 13px;
-      color: #aaa;
+      background: black;
     }
   </style>
 </head>
 <body>
 
 <div id="channels">
-  <h2>Channels</h2>
+  <h3>Channels</h3>
+  <button onclick="play('Big Buck Bunny','https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
+    Big Buck Bunny
+  </button>
+  <button onclick="play('Sintel','https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8')">
+    Sintel
+  </button>
+  <button onclick="play('Tears of Steel','https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8')">
+    Tears of Steel
+  </button>
 </div>
 
 <div id="player">
   <video id="video" controls autoplay></video>
 </div>
 
-<div id="status">Loading playlist…</div>
-
 <script>
-const PLAYLIST_URL = "https://iptv-org.github.io/iptv/index.language.m3u";
-const PROXY = "https://cors.isomorphic-git.org/"; // needed for browser
-
-const channelBox = document.getElementById("channels");
+let hls;
 const video = document.getElementById("video");
-const status = document.getElementById("status");
 
-let hls = null;
-
-function playStream(name, url) {
-  status.textContent = "Playing: " + name;
-
-  if (!url.endsWith(".m3u8")) {
-    status.textContent = "Not browser-playable";
-    return;
-  }
-
+function play(name, url) {
   if (hls) {
     hls.destroy();
     hls = null;
   }
 
-  const streamUrl = PROXY + url;
-
   if (Hls.isSupported()) {
     hls = new Hls();
-    hls.loadSource(streamUrl);
+    hls.loadSource(url);
     hls.attachMedia(video);
-
-    hls.on(Hls.Events.ERROR, () => {
-      status.textContent = "Stream error / blocked";
-    });
-  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-    video.src = streamUrl;
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = url;
   }
 }
-
-fetch(PROXY + PLAYLIST_URL)
-  .then(r => r.text())
-  .then(text => {
-    const lines = text.split("\n");
-    let currentName = "";
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-
-      if (line.startsWith("#EXTINF")) {
-        currentName = line.split(",").pop();
-      } else if (line && !line.startsWith("#")) {
-        const url = line;
-
-        const btn = document.createElement("button");
-        btn.textContent = currentName || "Unknown Channel";
-        btn.onclick = () => playStream(currentName, url);
-
-        channelBox.appendChild(btn);
-      }
-    }
-
-    status.textContent = "Channels loaded from M3U";
-  })
-  .catch(err => {
-    status.textContent = "Failed to load playlist";
-    console.error(err);
-  });
 </script>
 
 </body>
