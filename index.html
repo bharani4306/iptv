@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>IPTV Web Player</title>
+  <title>IPTV M3U Web Player</title>
 
-  <!-- HLS.js -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <style>
@@ -16,35 +15,30 @@
       display: flex;
       height: 100vh;
     }
-
     #channels {
-      width: 320px;
+      width: 360px;
       background: #1c1c1c;
       padding: 10px;
       overflow-y: auto;
       border-right: 1px solid #333;
     }
-
     #channels h2 {
+      margin: 0 0 10px;
       text-align: center;
-      margin-top: 0;
     }
-
     #channels button {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 6px;
+      padding: 8px;
+      margin-bottom: 5px;
       background: #2b2b2b;
       color: #fff;
       border: none;
       cursor: pointer;
       text-align: left;
     }
-
     #channels button:hover {
       background: #444;
     }
-
     #player {
       flex: 1;
       display: flex;
@@ -52,17 +46,14 @@
       justify-content: center;
       background: #000;
     }
-
     video {
       width: 95%;
       max-height: 95%;
-      background: black;
     }
-
     #status {
       position: fixed;
       bottom: 10px;
-      left: 330px;
+      left: 380px;
       font-size: 13px;
       color: #aaa;
     }
@@ -78,78 +69,72 @@
   <video id="video" controls autoplay></video>
 </div>
 
-<div id="status">Loading channels…</div>
+<div id="status">Loading playlist…</div>
 
 <script>
-const video = document.getElementById("video");
+const PLAYLIST_URL = "https://iptv-org.github.io/iptv/index.language.m3u";
+const PROXY = "https://cors.isomorphic-git.org/"; // needed for browser
+
 const channelBox = document.getElementById("channels");
+const video = document.getElementById("video");
 const status = document.getElementById("status");
+
 let hls = null;
 
-// Free demo CORS proxy (for college/demo only)
-const PROXY = "https://cors.isomorphic-git.org/";
-
 function playStream(name, url) {
-  status.textContent = "Trying: " + name;
+  status.textContent = "Playing: " + name;
 
   if (!url.endsWith(".m3u8")) {
-    status.textContent = "Skipped (not browser-playable)";
+    status.textContent = "Not browser-playable";
     return;
   }
-
-  const streamUrl = PROXY + url;
 
   if (hls) {
     hls.destroy();
     hls = null;
   }
 
+  const streamUrl = PROXY + url;
+
   if (Hls.isSupported()) {
     hls = new Hls();
     hls.loadSource(streamUrl);
     hls.attachMedia(video);
 
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      status.textContent = "Playing: " + name;
+    hls.on(Hls.Events.ERROR, () => {
+      status.textContent = "Stream error / blocked";
     });
-
-    hls.on(Hls.Events.ERROR, (_, data) => {
-      status.textContent = "Stream blocked or unavailable";
-      console.error(data);
-    });
-
   } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
     video.src = streamUrl;
-  } else {
-    status.textContent = "HLS not supported in this browser";
   }
 }
 
-fetch("channels.txt")
-  .then(res => res.text())
+fetch(PROXY + PLAYLIST_URL)
+  .then(r => r.text())
   .then(text => {
-    const lines = text
-      .split("\n")
-      .map(l => l.trim())
-      .filter(Boolean);
+    const lines = text.split("\n");
+    let currentName = "";
 
-    for (let i = 0; i < lines.length; i += 2) {
-      const name = lines[i];
-      const url = lines[i + 1];
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
 
-      if (!name || !url) continue;
+      if (line.startsWith("#EXTINF")) {
+        currentName = line.split(",").pop();
+      } else if (line && !line.startsWith("#")) {
+        const url = line;
 
-      const btn = document.createElement("button");
-      btn.textContent = name;
-      btn.onclick = () => playStream(name, url);
+        const btn = document.createElement("button");
+        btn.textContent = currentName || "Unknown Channel";
+        btn.onclick = () => playStream(currentName, url);
 
-      channelBox.appendChild(btn);
+        channelBox.appendChild(btn);
+      }
     }
 
-    status.textContent = "Channels loaded";
+    status.textContent = "Channels loaded from M3U";
   })
   .catch(err => {
-    status.textContent = "Failed to load channels.txt";
+    status.textContent = "Failed to load playlist";
     console.error(err);
   });
 </script>
