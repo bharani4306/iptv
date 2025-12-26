@@ -3,97 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Web M3U Player</title>
+    <title>Responsive Web IPTV Player</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         :root {
-            --bg-color: #121212;
-            --sidebar-bg: #1e1e1e;
-            --accent-color: #007bff;
-            --text-color: #eeeeee;
-            --border-color: #333;
+            --bg-color: #0f0f0f;
+            --sidebar-bg: #1a1a1a;
+            --accent: #3ea6ff;
+            --text: #ffffff;
+            --text-dim: #aaaaaa;
+            --border: #333333;
         }
 
+        * { box-sizing: border-box; }
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            display: flex; 
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif; 
             margin: 0; 
             height: 100vh; 
             background: var(--bg-color); 
-            color: var(--text-color);
-            overflow: hidden;
+            color: var(--text);
+            display: flex;
+            flex-direction: column; /* Mobile layout: Vertical */
         }
 
         /* Video Section */
         #player-container { 
-            flex: 3; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            background: #000; 
-            padding: 20px;
-        }
-        video { 
-            width: 100%; 
-            max-width: 1000px;
-            aspect-ratio: 16 / 9;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
             background: #000;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        #current-title { margin-top: 15px; font-weight: 300; color: #aaa; }
+        .video-wrapper {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            aspect-ratio: 16 / 9;
+        }
+        video { width: 100%; height: 100%; display: block; }
+        
+        .stream-info {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        #current-title { margin: 0; font-size: 1.1rem; font-weight: 500; }
 
-        /* Sidebar Section */
+        /* Sidebar/Playlist Section */
         #sidebar { 
-            flex: 1; 
-            min-width: 300px;
-            max-width: 400px;
-            background: var(--sidebar-bg);
+            flex: 1;
             display: flex;
             flex-direction: column;
-            border-left: 1px solid var(--border-color);
-        }
-        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border-color); }
-        #search-input { 
-            width: 100%; 
-            padding: 10px; 
-            box-sizing: border-box; 
-            background: #2b2b2b; 
-            border: 1px solid var(--border-color); 
-            color: white; 
-            border-radius: 4px;
+            overflow: hidden;
+            background: var(--sidebar-bg);
         }
 
-        #playlist-items { 
-            flex: 1; 
-            overflow-y: auto; 
+        .search-box {
+            padding: 15px;
+            background: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border);
         }
-        .channel-item { 
+        #search-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #2a2a2a;
+            color: white;
+            font-size: 1rem;
+        }
+
+        #playlist-items {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .channel-item {
             display: flex;
             align-items: center;
-            padding: 12px 20px; 
-            cursor: pointer; 
-            border-bottom: 1px solid #252525; 
-            transition: background 0.2s; 
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #252525;
+            transition: background 0.2s;
         }
         .channel-item:hover { background: #333; }
-        .channel-item.active { border-left: 4px solid var(--accent-color); background: #252525; }
-        .channel-logo { width: 30px; height: 30px; margin-right: 15px; object-fit: contain; background: #000; border-radius: 4px; }
+        .channel-item.active { background: #2a2a2a; border-left: 4px solid var(--accent); }
+
+        .channel-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            margin-right: 15px;
+            object-fit: contain;
+            background: #000;
+        }
+        .channel-name { font-size: 0.95rem; }
+
+        /* DESKTOP LAYOUT (Screen width > 992px) */
+        @media (min-width: 992px) {
+            body { flex-direction: row; }
+            #player-container { flex: 3; height: 100vh; position: relative; }
+            #sidebar { flex: 1; max-width: 400px; min-width: 350px; height: 100vh; }
+            .video-wrapper { margin-top: 50px; }
+        }
     </style>
 </head>
 <body>
 
 <div id="player-container">
-    <video id="video" controls></video>
-    <h2 id="current-title">Select a Channel</h2>
+    <div class="video-wrapper">
+        <video id="video" controls></video>
+    </div>
+    <div class="stream-info">
+        <h2 id="current-title">Select a Channel</h2>
+    </div>
 </div>
 
 <div id="sidebar">
-    <div class="sidebar-header">
-        <h3 style="margin-top:0">Live Channels</h3>
-        <input type="text" id="search-input" placeholder="Search by name...">
+    <div class="search-box">
+        <input type="text" id="search-input" placeholder="Search channels...">
     </div>
-    <div id="playlist-items">Loading channels...</div>
+    <div id="playlist-items">Loading playlist...</div>
 </div>
 
 <script>
@@ -105,34 +134,29 @@
     let hls = new Hls();
     let allChannels = [];
 
-    // Configuration - Using a sample IPTV-org link
+    // Replace with your M3U URL
     const M3U_URL = 'https://iptv-org.github.io/iptv/index.m3u'; 
 
     async function init() {
         try {
             const response = await fetch(M3U_URL);
+            if (!response.ok) throw new Error('Network response was not ok');
             const text = await response.text();
             allChannels = parseM3U(text);
             renderPlaylist(allChannels);
         } catch (err) {
-            playlistElement.innerHTML = `<div style="padding:20px; color: #ff4444;">Failed to load M3U. This is likely a CORS issue.</div>`;
+            playlistElement.innerHTML = `<div style="padding:20px; color: #ff5555;">Error: ${err.message}. Check CORS or URL.</div>`;
         }
     }
 
     function parseM3U(data) {
         const items = [];
         const lines = data.split('\n');
-        
         for (let i = 0; i < lines.length; i++) {
             if (lines[i].startsWith('#EXTINF')) {
-                // Extract Name
                 const name = lines[i].split(',')[1] || "Unknown Channel";
-                
-                // Extract Logo
                 const logoMatch = lines[i].match(/tvg-logo="([^"]+)"/);
-                const logo = logoMatch ? logoMatch[1] : 'https://via.placeholder.com/30?text=?';
-
-                // Get URL from the next line
+                const logo = logoMatch ? logoMatch[1] : 'https://via.placeholder.com/40?text=TV';
                 const url = lines[i + 1]?.trim();
                 
                 if (url && url.startsWith('http')) {
@@ -145,20 +169,14 @@
 
     function renderPlaylist(channels) {
         playlistElement.innerHTML = '';
-        if (channels.length === 0) {
-            playlistElement.innerHTML = '<div style="padding:20px; color: #666;">No channels found.</div>';
-            return;
-        }
-
-        channels.forEach(item => {
+        channels.forEach((item, index) => {
             const div = document.createElement('div');
             div.className = 'channel-item';
             div.innerHTML = `
-                <img class="channel-logo" src="${item.logo}" onerror="this.src='https://via.placeholder.com/30?text=TV'">
-                <span>${item.name}</span>
+                <img class="channel-logo" src="${item.logo}" onerror="this.src='https://via.placeholder.com/40?text=TV'">
+                <span class="channel-name">${item.name}</span>
             `;
             div.onclick = () => {
-                // UI Highlight
                 document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
                 div.classList.add('active');
                 playStream(item.url, item.name);
@@ -168,25 +186,23 @@
     }
 
     function playStream(url, name) {
-        titleElement.innerText = "Playing: " + name;
-        
+        titleElement.innerText = name;
         if (Hls.isSupported()) {
-            hls.destroy(); // Clean up previous instance
+            hls.destroy();
             hls = new Hls();
             hls.loadSource(url);
             hls.attachMedia(video);
             hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-            
-            hls.on(Hls.Events.ERROR, (event, data) => {
-                if (data.fatal) console.error("HLS Error:", data);
-            });
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = url;
             video.play();
         }
+        // Smooth scroll to top on mobile when a channel is picked
+        if (window.innerWidth < 992) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     }
 
-    // Search Filtering
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
         const filtered = allChannels.filter(ch => ch.name.toLowerCase().includes(query));
