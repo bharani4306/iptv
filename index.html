@@ -3,104 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced HLS Player</title>
+    <title>Advanced M3U Player</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        body { font-family: sans-serif; background: #121212; color: white; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px; }
-        .container { width: 100%; max-width: 800px; }
-        video { width: 100%; background: #000; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; background: #1e1e1e; padding: 20px; border-radius: 8px; }
-        .control-group { display: flex; flex-direction: column; }
-        label { margin-bottom: 8px; font-size: 0.9rem; color: #aaa; }
-        select { background: #333; color: white; border: 1px solid #444; padding: 10px; border-radius: 4px; outline: none; }
-        .url-input { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 4px; border: none; background: #333; color: white; }
+        :root {
+            --bg-color: #0f0f0f;
+            --sidebar-bg: #1a1a1a;
+            --accent: #3ea6ff;
+            --text: #ffffff;
+            --border: #333333;
+        }
+
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; height: 100vh; 
+            background: var(--bg-color); color: var(--text);
+            display: flex; flex-direction: column;
+        }
+
+        #player-container { width: 100%; background: #000; position: sticky; top: 0; z-index: 100; }
+        .video-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; aspect-ratio: 16 / 9; }
+        video { width: 100%; height: 100%; display: block; }
+        
+        .controls-overlay {
+            padding: 15px;
+            background: #111;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+        }
+
+        select {
+            background: #2a2a2a;
+            color: white;
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        #sidebar { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--sidebar-bg); }
+        .search-box { padding: 15px; border-bottom: 1px solid var(--border); }
+        #search-input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: #2a2a2a; color: white; }
+        #playlist-items { flex: 1; overflow-y: auto; }
+
+        .channel-item { display: flex; align-items: center; padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #252525; }
+        .channel-item:hover { background: #333; }
+        .channel-item.active { background: #2a2a2a; border-left: 4px solid var(--accent); }
+        .channel-logo { width: 40px; height: 40px; margin-right: 15px; object-fit: contain; }
+
+        @media (min-width: 992px) {
+            body { flex-direction: row; }
+            #player-container { flex: 3; height: 100vh; overflow-y: auto; }
+            #sidebar { flex: 1; max-width: 400px; height: 100vh; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <input type="text" id="m3u8-url" class="url-input" placeholder="Paste .m3u8 URL here..." value="https://test-streams.mux.dev/pts_608/playlist.m3u8">
-    <video id="video" controls></video>
-
-    <div class="controls">
-        <div class="control-group">
-            <label>Audio Track</label>
-            <select id="audio-select"><option>No audio tracks</option></select>
+<div id="player-container">
+    <div class="video-wrapper">
+        <video id="video" controls></video>
+    </div>
+    
+    <div class="controls-overlay">
+        <div style="flex:1">
+            <label style="font-size: 12px; color: #888;">Audio Track</label>
+            <select id="audio-track-select"><option>Default</option></select>
         </div>
-        <div class="control-group">
-            <label>Subtitles</label>
+        <div style="flex:1">
+            <label style="font-size: 12px; color: #888;">Subtitles</label>
             <select id="subtitle-select"><option value="-1">Off</option></select>
         </div>
     </div>
+
+    <div style="padding: 15px;">
+        <h2 id="current-title" style="margin:0; font-size: 1.2rem;">Select a Channel</h2>
+    </div>
+</div>
+
+<div id="sidebar">
+    <div class="search-box">
+        <input type="text" id="search-input" placeholder="Search channels...">
+    </div>
+    <div id="playlist-items">Loading...</div>
 </div>
 
 <script>
     const video = document.getElementById('video');
-    const m3u8Input = document.getElementById('m3u8-url');
-    const audioSelect = document.getElementById('audio-select');
+    const audioSelect = document.getElementById('audio-track-select');
     const subtitleSelect = document.getElementById('subtitle-select');
+    const playlistElement = document.getElementById('playlist-items');
+    const titleElement = document.getElementById('current-title');
+    const searchInput = document.getElementById('search-input');
     
     let hls = new Hls();
+    let allChannels = [];
 
-    function loadStream(url) {
+    const M3U_URL = 'https://iptv-org.github.io/iptv/index.m3u'; 
+
+    async function init() {
+        try {
+            const response = await fetch(M3U_URL);
+            const text = await response.text();
+            allChannels = parseM3U(text);
+            renderPlaylist(allChannels);
+        } catch (err) {
+            playlistElement.innerHTML = `<div style="padding:20px;">Error loading playlist.</div>`;
+        }
+    }
+
+    function parseM3U(data) {
+        const items = [];
+        const lines = data.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].startsWith('#EXTINF')) {
+                const name = lines[i].split(',')[1] || "Unknown";
+                const logo = lines[i].match(/tvg-logo="([^"]+)"/)?.[1] || '';
+                const url = lines[i + 1]?.trim();
+                if (url && url.startsWith('http')) items.push({ name, url, logo });
+            }
+        }
+        return items;
+    }
+
+    function renderPlaylist(channels) {
+        playlistElement.innerHTML = '';
+        channels.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'channel-item';
+            div.innerHTML = `<img class="channel-logo" src="${item.logo}" onerror="this.style.display='none'"><span>${item.name}</span>`;
+            div.onclick = () => playStream(item.url, item.name);
+            playlistElement.appendChild(div);
+        });
+    }
+
+    function playStream(url, name) {
+        titleElement.innerText = name;
         if (Hls.isSupported()) {
-            hls.destroy(); // Clean up previous instance
+            hls.destroy();
             hls = new Hls();
             hls.loadSource(url);
             hls.attachMedia(video);
 
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
                 video.play();
-                setupAudioTracks();
-                setupSubtitles();
+                updateTracks();
             });
 
-            // Listen for changes in tracks (some streams load these late)
-            hls.on(Hls.Events.AUDIO_TRACKS_UPDATED, setupAudioTracks);
-            hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, setupSubtitles);
-        } 
-        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            // Safari native support (Note: native switching is handled by Safari's UI)
-            video.src = url;
+            // Listen for available tracks
+            hls.on(Hls.Events.AUDIO_TRACKS_UPDATED, updateTracks);
+            hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, updateSubtitles);
         }
     }
 
-    function setupAudioTracks() {
+    function updateTracks() {
+        // Handle Audio Tracks
         const tracks = hls.audioTracks;
-        if (tracks.length > 0) {
-            audioSelect.innerHTML = tracks.map((track, id) => 
-                `<option value="${id}">${track.name || track.lang || 'Track ' + id}</option>`
-            ).join('');
-            
-            audioSelect.onchange = () => {
-                hls.audioTrack = parseInt(audioSelect.value);
-            };
-        }
+        audioSelect.innerHTML = tracks.map((t, i) => `<option value="${i}">${t.name || t.lang || 'Track ' + i}</option>`).join('');
+        audioSelect.onchange = () => { hls.audioTrack = parseInt(audioSelect.value); };
+
+        // Handle Subtitles
+        updateSubtitles();
     }
 
-    function setupSubtitles() {
+    function updateSubtitles() {
         const subs = hls.subtitleTracks;
         subtitleSelect.innerHTML = '<option value="-1">Off</option>' + 
-            subs.map((track, id) => 
-                `<option value="${id}">${track.name || track.lang || 'Subtitle ' + id}</option>`
-            ).join('');
-
+            subs.map((s, i) => `<option value="${i}">${s.name || s.lang || 'Sub ' + i}</option>`).join('');
+        
         subtitleSelect.onchange = () => {
-            const id = parseInt(subtitleSelect.value);
-            hls.subtitleTrack = id;
-            // Ensure subtitles are actually displayed
-            hls.subtitleDisplay = (id !== -1);
+            hls.subtitleTrack = parseInt(subtitleSelect.value);
+            hls.subtitleDisplay = parseInt(subtitleSelect.value) !== -1;
         };
     }
 
-    // Trigger load on Enter key
-    m3u8Input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') loadStream(m3u8Input.value);
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        renderPlaylist(allChannels.filter(ch => ch.name.toLowerCase().includes(query)));
     });
 
-    // Initial load
-    loadStream(m3u8Input.value);
+    init();
 </script>
-
 </body>
 </html>
